@@ -9,14 +9,14 @@ const (
 
 // Integrator defines the interface that an intergration must implement.
 type Integrator interface {
-	SendDataUp(pl DataUpPayload) error                      // send data-up payload
-	SendJoinNotification(pl JoinNotification) error         // send join notification
-	SendACKNotification(pl ACKNotification) error           // send ack notification
-	SendErrorNotification(pl ErrorNotification) error       // send error notification
-	SendStatusNotification(pl StatusNotification) error     // send status notification
-	SendLocationNotification(pl LocationNotification) error // send location notofication
-	DataDownChan() chan DataDownPayload                     // returns DataDownPayload channel
-	Close() error                                           // closes the handler
+	SendDataUp(pl DataUpPayload) error                      // send data-up payload，数据上传
+	SendJoinNotification(pl JoinNotification) error         // send join notification，设备加入通知
+	SendACKNotification(pl ACKNotification) error           // send ack notification，回应通知
+	SendErrorNotification(pl ErrorNotification) error       // send error notification，错误通知
+	SendStatusNotification(pl StatusNotification) error     // send status notification，状态通知
+	SendLocationNotification(pl LocationNotification) error // send location notification，定位通知
+	DataDownChan() chan DataDownPayload                     // returns DataDownPayload channel，数据下发通道
+	Close() error                                           // closes the handler，关闭请求
 }
 
 var integration Integrator

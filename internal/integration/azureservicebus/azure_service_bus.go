@@ -1,4 +1,5 @@
 // Package azureservicebus implements an Azure Service-Bus integration.
+// 微软azure服务总线的消息订阅和发布服务
 package azureservicebus
 
 import (

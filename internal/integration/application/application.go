@@ -1,4 +1,5 @@
 // Package application implements a wrapper for application integrations.
+// 应用集成的封装
 package application
 
 import (

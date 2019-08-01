@@ -1,3 +1,4 @@
+// mock服务
 package mock
 
 import "github.com/brocaar/lora-app-server/internal/integration"

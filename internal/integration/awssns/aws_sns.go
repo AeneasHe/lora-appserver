@@ -1,4 +1,5 @@
 // Package awssns implements an AWS NSN integration.
+// 亚马逊NSN服务
 package awssns
 
 import (

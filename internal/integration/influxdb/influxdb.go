@@ -1,4 +1,5 @@
 // Package influxdb implements a InfluxDB integration.
+// InfluxDB是一个时序数据库
 package influxdb
 
 import (

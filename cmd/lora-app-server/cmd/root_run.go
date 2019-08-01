@@ -33,19 +33,19 @@ func run(cmd *cobra.Command, args []string) error {
 	defer cancel()
 
 	tasks := []func() error{
-		setLogLevel,
-		printStartMessage,
-		setupStorage,
-		setupNetworkServer,
-		setupIntegration,
-		setupCodec,
-		handleDataDownPayloads,
-		startGatewayPing,
-		setupMulticastSetup,
-		setupFragmentation,
-		setupFUOTA,
-		setupAPI,
-		setupMetrics,
+		setLogLevel,            // 日志
+		printStartMessage,      // 启动消息
+		setupStorage,           // 设置数据库（postgresql,redis)
+		setupNetworkServer,     // 设置网络服务(连接Lora NetworkServer的grpc服务及请求)
+		setupIntegration,       // 设置集成（mqtt/postgresql/各种云平台的集成，集成指将消息和数据上传和下发对接到各种平台或数据库）
+		setupCodec,             // 设置payload的编码和解码代码的执行器/解释器
+		handleDataDownPayloads, // 处理下行负载（将下行负载发送到设备上）
+		startGatewayPing,       // 开启网关发现功能(指不断ping已经注册的网关,保持心跳连接)
+		setupMulticastSetup,    // 设置广播
+		setupFragmentation,     // 设置分区
+		setupFUOTA,             // 设置FUOTA(固件升级)，需要调用Multicast和Fragmentation
+		setupAPI,               // 设置api
+		setupMetrics,           // 设置自动监控报警系统
 	}
 
 	for _, t := range tasks {
@@ -96,13 +96,14 @@ func setupStorage() error {
 func setupIntegration() error {
 	var confs []interface{}
 
+	//根据配置文件选择集成对接到相应平台
 	for _, name := range config.C.ApplicationServer.Integration.Enabled {
 		switch name {
 		case "aws_sns":
 			confs = append(confs, config.C.ApplicationServer.Integration.AWSSNS)
 		case "azure_service_bus":
 			confs = append(confs, config.C.ApplicationServer.Integration.AzureServiceBus)
-		case "mqtt":
+		case "mqtt": //默认配置集成到mqtt
 			confs = append(confs, config.C.ApplicationServer.Integration.MQTT)
 		case "gcp_pub_sub":
 			confs = append(confs, config.C.ApplicationServer.Integration.GCPPubSub)

@@ -24,8 +24,11 @@ var (
 
 // Setup configures the package.
 func Setup(conf config.Config) error {
+	//间隔
 	syncInterval = conf.ApplicationServer.RemoteMulticastSetup.SyncInterval
+	//批大小
 	syncBatchSize = conf.ApplicationServer.RemoteMulticastSetup.SyncBatchSize
+	//重试次数
 	syncRetries = conf.ApplicationServer.RemoteMulticastSetup.SyncRetries
 
 	go SyncRemoteMulticastSetupLoop()
@@ -38,7 +41,7 @@ func Setup(conf config.Config) error {
 func SyncRemoteMulticastSetupLoop() {
 	for {
 		err := storage.Transaction(func(tx sqlx.Ext) error {
-			return syncRemoteMulticastSetup(tx)
+			return syncRemoteMulticastSetup(tx) //异步远程广播设置
 		})
 
 		if err != nil {

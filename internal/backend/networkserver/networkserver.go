@@ -26,8 +26,8 @@ type Pool interface {
 }
 
 type client struct {
-	client     ns.NetworkServerServiceClient
-	clientConn *grpc.ClientConn
+	client     ns.NetworkServerServiceClient //lora network的grpc服务
+	clientConn *grpc.ClientConn              //lora network的grpc连接
 	caCert     []byte
 	tlsCert    []byte
 	tlsKey     []byte
@@ -35,6 +35,7 @@ type client struct {
 
 // Setup configures the networkserver package.
 func Setup(conf config.Config) error {
+	//pool是服务器客户端连接池
 	p = &pool{
 		clients: make(map[string]client),
 	}
@@ -52,8 +53,8 @@ func SetPool(pp Pool) {
 }
 
 type pool struct {
-	sync.RWMutex
-	clients map[string]client
+	sync.RWMutex                   //读写锁，写锁定时是阻塞的不能进行其他读写，没有写锁时可以进行多次读
+	clients      map[string]client //客户端表
 }
 
 // Get returns a NetworkServerClient for the given server (hostname:ip).
@@ -68,14 +69,16 @@ func (p *pool) Get(hostname string, caCert, tlsCert, tlsKey []byte) (ns.NetworkS
 	}
 
 	// if the connection exists in the map, but when the certificates changed
-	// try to cloe the connection and re-connect
+	// try to close the connection and re-connect
 	if ok && (!bytes.Equal(c.caCert, caCert) || !bytes.Equal(c.tlsCert, tlsCert) || !bytes.Equal(c.tlsKey, tlsKey)) {
 		c.clientConn.Close()
 		delete(p.clients, hostname)
 		connect = true
 	}
 
+	//如果客户端在连接池中
 	if connect {
+		//建立该客户端的连接
 		clientConn, nsClient, err := p.createClient(hostname, caCert, tlsCert, tlsKey)
 		if err != nil {
 			return nil, errors.Wrap(err, "create network-server api client error")
@@ -87,6 +90,7 @@ func (p *pool) Get(hostname string, caCert, tlsCert, tlsKey []byte) (ns.NetworkS
 			tlsCert:    tlsCert,
 			tlsKey:     tlsKey,
 		}
+		//更新客户端连接
 		p.clients[hostname] = c
 	}
 
@@ -99,6 +103,7 @@ func (p *pool) createClient(hostname string, caCert, tlsCert, tlsKey []byte) (*g
 		grpc_logrus.WithLevels(grpc_logrus.DefaultCodeToLevel),
 	}
 
+	//grpc调用配置切片
 	nsOpts := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithUnaryInterceptor(
@@ -110,6 +115,7 @@ func (p *pool) createClient(hostname string, caCert, tlsCert, tlsKey []byte) (*g
 	}
 
 	if len(caCert) == 0 && len(tlsCert) == 0 && len(tlsKey) == 0 {
+		//如果没有启用tls认证，给出警告
 		nsOpts = append(nsOpts, grpc.WithInsecure())
 		log.WithField("server", hostname).Warning("creating insecure network-server client")
 	} else {
@@ -123,20 +129,23 @@ func (p *pool) createClient(hostname string, caCert, tlsCert, tlsKey []byte) (*g
 		if !caCertPool.AppendCertsFromPEM(caCert) {
 			return nil, nil, errors.Wrap(err, "append ca cert to pool error")
 		}
-
+		//将认证配置写入grpc配置切片中
 		nsOpts = append(nsOpts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{
 			Certificates: []tls.Certificate{cert},
 			RootCAs:      caCertPool,
 		})))
 	}
 
+	//设置请求上下文
 	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
 
+	//grpc连接
 	nsClient, err := grpc.DialContext(ctx, hostname, nsOpts...)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "dial network-server api error")
 	}
 
+	//返回grpc请求及grpc服务
 	return nsClient, ns.NewNetworkServerServiceClient(nsClient), nil
 }

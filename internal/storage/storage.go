@@ -26,6 +26,7 @@ func Setup(c config.Config) error {
 	jwtsecret = []byte(c.ApplicationServer.ExternalAPI.JWTSecret)
 	HashIterations = c.General.PasswordHashIterations
 
+	//redis连接池，redisPool是个全局变量
 	log.Info("storage: setting up Redis pool")
 	redisPool = &redis.Pool{
 		MaxIdle:     10,
@@ -53,6 +54,7 @@ func Setup(c config.Config) error {
 		},
 	}
 
+	//PostgreSQL
 	log.Info("storage: connecting to PostgreSQL database")
 	d, err := sqlx.Open("postgres", c.PostgreSQL.DSN)
 	if err != nil {
@@ -67,8 +69,10 @@ func Setup(c config.Config) error {
 		}
 	}
 
+	//封装PostgreSQL连接，使得能够自动保存日志，db是全局变量
 	db = &DBLogger{d}
 
+	//数据库自动迁移
 	if c.PostgreSQL.Automigrate {
 		log.Info("storage: applying PostgreSQL data migrations")
 		m := &migrate.AssetMigrationSource{

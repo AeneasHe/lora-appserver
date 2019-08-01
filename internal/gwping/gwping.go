@@ -26,6 +26,7 @@ const (
 )
 
 // SendPingLoop is a never returning function sending the gateway pings.
+// 循环不断的发送网关ping
 func SendPingLoop() {
 	for {
 		if err := sendGatewayPing(); err != nil {
@@ -107,6 +108,7 @@ func HandleReceivedPing(req *as.HandleProprietaryUplinkRequest) error {
 // frame and sends this frame to the network-server for transmission.
 func sendGatewayPing() error {
 	return storage.Transaction(func(tx sqlx.Ext) error {
+		//数据库查询注册的网关
 		gw, err := getGatewayForPing(tx)
 		if err != nil {
 			return errors.Wrap(err, "get gateway for ping error")
@@ -115,11 +117,13 @@ func sendGatewayPing() error {
 			return nil
 		}
 
+		//查询NetworkServer
 		n, err := storage.GetNetworkServer(storage.DB(), gw.NetworkServerID)
 		if err != nil {
 			return errors.Wrap(err, "get network-server error")
 		}
 
+		//创建ping
 		ping := storage.GatewayPing{
 			GatewayMAC: gw.MAC,
 			Frequency:  n.GatewayDiscoveryTXFrequency,
@@ -140,6 +144,7 @@ func sendGatewayPing() error {
 			return errors.Wrap(err, "store mic lookup error")
 		}
 
+		//发送ping
 		err = sendPing(mic, n, ping)
 		if err != nil {
 			return errors.Wrap(err, "send ping error")
@@ -148,6 +153,7 @@ func sendGatewayPing() error {
 		gw.LastPingID = &ping.ID
 		gw.LastPingSentAt = &ping.CreatedAt
 
+		//保存ping结果
 		err = storage.UpdateGateway(tx, gw)
 		if err != nil {
 			return errors.Wrap(err, "update gateway error")

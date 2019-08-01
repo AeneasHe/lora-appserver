@@ -1,3 +1,4 @@
+// postgresql数据库服务集成
 package postgresql
 
 import (

@@ -1,5 +1,6 @@
 // Package multi implements a multi-integration handler.
 // This handler can be used to combine the handling of multiple integrations.
+// 多项服务同时集成
 package multi
 
 import (

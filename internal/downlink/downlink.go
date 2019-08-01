@@ -20,6 +20,7 @@ import (
 
 // HandleDataDownPayloads handles received downlink payloads to be emitted to the
 // devices.
+// 将下行负载发送到设备上
 func HandleDataDownPayloads() {
 	for pl := range integration.Integration().DataDownChan() {
 		go func(pl integration.DataDownPayload) {

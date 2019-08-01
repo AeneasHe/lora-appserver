@@ -1,3 +1,4 @@
+// thingsboard服务集成
 package thingsboard
 
 import (

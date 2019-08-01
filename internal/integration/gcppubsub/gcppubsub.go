@@ -1,3 +1,4 @@
+// google cload platform的消息发布订阅服务
 package gcppubsub
 
 import (

@@ -49,6 +49,7 @@ func (gl *grpcLogger) Infof(format string, args ...interface{}) {
 }
 
 func init() {
+	// 设置grpc日志
 	grpclog.SetLoggerV2(&grpcLogger{log.StandardLogger()})
 }
 

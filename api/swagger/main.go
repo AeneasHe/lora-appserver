@@ -31,6 +31,7 @@ func main() {
 	if len(os.Args) != 2 {
 		log.Fatal("usage: go run main.go inputPath")
 	}
+	//swagger主配置文件
 	swagger := model{
 		Swagger:     "2.0",
 		Consumes:    []string{"application/json"},
@@ -49,6 +50,7 @@ For more information about the usage of the LoRa App Server (REST) API, see
 	if err != nil {
 		log.Fatal(err)
 	}
+	//循环读取swagger子配置文件
 	for _, fileInfo := range fileInfos {
 		if !strings.HasSuffix(fileInfo.Name(), ".swagger.json") {
 			continue
@@ -63,19 +65,22 @@ For more information about the usage of the LoRa App Server (REST) API, see
 		b = []byte(strings.Replace(string(b), `"title"`, `"description"`, -1))
 
 		var m model
+		//解析swagger子配置文件
 		err = json.Unmarshal(b, &m)
 		if err != nil {
 			log.Fatal(err)
 		}
 
+		//将swagger子配置文件的路径添加到swagger主配置文件
 		for k, v := range m.Paths {
 			swagger.Paths[k] = v
 		}
+		//将swagger子配置文件的定义添加到swagger主配置文件
 		for k, v := range m.Definitions {
 			swagger.Definitions[k] = v
 		}
 	}
-
+	//生成swagger主配置，保存到目标路径../static/swagger/api.swagger.json（在gen.sh中定义）
 	enc := json.NewEncoder(os.Stdout)
 	err = enc.Encode(swagger)
 	if err != nil {

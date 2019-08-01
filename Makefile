@@ -33,6 +33,7 @@ dist: ui/build internal/statics internal/migrations
 snapshot: ui/build internal/statics internal/migrations
 	@goreleaser --snapshot
 
+#ui编译
 ui/build:
 	@echo "Building ui"
 	@cd ui && npm run build

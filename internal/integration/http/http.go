@@ -1,4 +1,5 @@
 // Package http implements a HTTP integration.
+// http服务
 package http
 
 import (
