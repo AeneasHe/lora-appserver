@@ -13,7 +13,7 @@ require (
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/gofrs/uuid v3.2.0+incompatible
-	github.com/golang/protobuf v1.3.1
+	github.com/golang/protobuf v1.4.3
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/goreleaser/goreleaser v0.106.0
 	github.com/goreleaser/nfpm v0.11.0
@@ -26,19 +26,19 @@ require (
 	github.com/jteeuwen/go-bindata v3.0.8-0.20180305030458-6025e8de665b+incompatible
 	github.com/lib/pq v1.1.0
 	github.com/mmcloughlin/geohash v0.9.0
-	github.com/pkg/errors v0.8.1
-	github.com/prometheus/client_golang v1.0.0
+	github.com/pkg/errors v0.9.1
+	github.com/prometheus/client_golang v1.11.1
 	github.com/robertkrimen/otto v0.0.0-20180617131154-15f95af6e78d
 	github.com/rubenv/sql-migrate v0.0.0-20181213081019-5a8808c14925
-	github.com/sirupsen/logrus v1.4.1
+	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.3.2
-	github.com/stretchr/testify v1.3.0
+	github.com/stretchr/testify v1.4.0
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5
-	golang.org/x/crypto v0.0.0-20190325154230-a5d413f7728c
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3
-	golang.org/x/net v0.0.0-20190328230028-74de082e2cca
+	golang.org/x/net v0.0.0-20200625001655-4c5254603344
 	golang.org/x/tools v0.0.0-20190328211700-ab21143f2384
 	google.golang.org/api v0.3.1
 	google.golang.org/genproto v0.0.0-20190404172233-64821d5d2107
