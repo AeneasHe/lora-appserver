@@ -24,7 +24,7 @@
     "react-text-mask": "^5.4.3",
     "robust-websocket": "^0.3.0",
     "source-map-explorer": "^1.6.0",
-    "swagger-client": "^3.8.23",
+    "swagger-client": "^3.19.0",
     "typeface-roboto": "0.0.54",
     "whatwg-fetch": "^3.0.0"
   },
